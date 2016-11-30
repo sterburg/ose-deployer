@@ -40,9 +40,9 @@ if [ "$HTTP_PROXY" == "" ]; then
                                 \"env\" : [ { \"name\": \"HTTP_PROXY\" , \"value\": \"$HTTP_PROXY\"  },
                                             { \"name\": \"http_proxy\" , \"value\": \"$http_proxy\"  },
                                             { \"name\": \"HTTPS_PROXY\", \"value\": \"$HTTPS_PROXY\" },
-                                            { \"name\": \"https_proxy\", \"value\": \"$https_proxy\" }
-                                            { \"name\": \"NO_PROXY\"   , \"value\": \"$NO_PROXY\" }
-                                            { \"name\": \"no_proxy\"   , \"value\": \"$no_proxy\" }
+                                            { \"name\": \"https_proxy\", \"value\": \"$https_proxy\" },
+                                            { \"name\": \"NO_PROXY\"   , \"value\": \"$NO_PROXY\"    },
+                                            { \"name\": \"no_proxy\"   , \"value\": \"$no_proxy\"    }
                                           ] 
                               } 
                             ] 

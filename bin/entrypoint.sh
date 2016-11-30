@@ -10,6 +10,8 @@ env
 oc whoami
 oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get dc
 oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get rc
+oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get rc $OPENSHIFT_DEPLOYMENT_NAME
+oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get rc --template="{{range .spec.template.spec.containers}}{{.name}} {{end}}"
 oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get pods
 oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE export -o json rc/$OPENSHIFT_DEPLOYMENT_NAME
 
@@ -26,7 +28,7 @@ if [ "$HTTP_PROXY" == "" ]; then
         export http_proxy="$HTTP_PROXY"
         export https_proxy="$HTTP_PROXY"
         #export NO_PROXY
-        for CNAME in `oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get rc/proxy-6 --template="{{range .spec.template.spec.containers}}{{.name}}{{end}}"`; do
+        for CNAME in `oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get rc/$OPENSHIFT_DEPLOYMENT_NAME --template="{{range .spec.template.spec.containers}}{{.name}} {{end}}"`; do
           oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE patch  rc/$OPENSHIFT_DEPLOYMENT_NAME --patch="
             {\"spec\": 
                 {\"template\": 

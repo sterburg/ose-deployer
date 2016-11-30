@@ -2,6 +2,6 @@ FROM registry.access.redhat.com/openshift3/ose-deployer:latest
 
 MAINTAINER Steven wolfram
 
-COPY bin/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY bin/ /usr/local/bin/
 
 ENTRYPOINT /usr/local/bin/entrypoint.sh

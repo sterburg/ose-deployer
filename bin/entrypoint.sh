@@ -4,8 +4,13 @@ set -x
 
 echo "CMD = $@"
 
+mount
 find /run/secrets/
 env
+oc whoami
+oc get dc
+oc get rc
+oc get pods
 #echo $DEPLOYMENT | python -m json.tool
 
 if [ "$HTTP_PROXY" == "" ]; then

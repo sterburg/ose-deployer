@@ -2,19 +2,6 @@
 
 set -x
 
-echo "CMD = $@"
-
-mount
-find /run/secrets/
-env
-oc whoami
-oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get dc
-oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get rc
-oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get rc $OPENSHIFT_DEPLOYMENT_NAME
-oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get rc --template='{{range .spec.template.spec.containers}}{{.name}} {{end}}'
-oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get pods
-oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE export -o json rc/$OPENSHIFT_DEPLOYMENT_NAME
-
 if [ "$HTTP_PROXY" == "" ]; then
     export OPS_NAMESPACE=`grep search /etc/resolv.conf |awk '{sub(".svc","-ops.svc", $2); print $2 }'`
     export PROXY_HOST="proxy.$OPS_NAMESPACE"
@@ -51,7 +38,6 @@ if [ "$HTTP_PROXY" == "" ]; then
                 }
             }"
         done
-        oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE export -o json rc/$OPENSHIFT_DEPLOYMENT_NAME
     fi
 fi
 

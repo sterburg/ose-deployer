@@ -12,7 +12,6 @@ oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get dc
 oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get rc
 oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get pods
 oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE export -o json rc/$OPENSHIFT_DEPLOYMENT_NAME
-oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE export -o json rc/$OPENSHIFT_DEPLOYMENT_NAME | python -m json.tool
 
 if [ "$HTTP_PROXY" == "" ]; then
     export OPS_NAMESPACE=`grep search /etc/resolv.conf |awk '{sub(".svc","-ops.svc", $2); print $2 }'`
@@ -27,7 +26,26 @@ if [ "$HTTP_PROXY" == "" ]; then
         export http_proxy="$HTTP_PROXY"
         export https_proxy="$HTTP_PROXY"
         #export NO_PROXY
-        oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE patch  rc/$OPENSHIFT_DEPLOYMENT_NAME --patch="{'spec': {'template': {'spec': { 'containers': [ { 'env': [ { 'name': 'HTTP_PROXY', 'value': '$HTTP_PROXY' } ] } ] } } } }" && true
+        for CNAME in `oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE get rc/proxy-6 --template="{{range .spec.template.spec.containers}}{{.name}}{{end}}"`; do
+          oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE patch  rc/$OPENSHIFT_DEPLOYMENT_NAME --patch="
+            {\"spec\": 
+                {\"template\": 
+                    {\"spec\": 
+                        { \"containers\": 
+                            [ { \"name\": \"$CNAME\", 
+                                \"env\" : [ { \"name\": \"HTTP_PROXY\" , \"value\": \"$HTTP_PROXY\"  },
+                                            { \"name\": \"http_proxy\" , \"value\": \"$http_proxy\"  },
+                                            { \"name\": \"HTTPS_PROXY\", \"value\": \"$HTTPS_PROXY\" },
+                                            { \"name\": \"https_proxy\", \"value\": \"$https_proxy\" }
+                                          ] 
+                              } 
+                            ] 
+                        } 
+                    }
+                }
+            }"
+        done
+        oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE export -o json rc/$OPENSHIFT_DEPLOYMENT_NAME
     fi
 fi
 

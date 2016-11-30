@@ -8,10 +8,11 @@ mount
 find /run/secrets/
 env
 oc whoami
+oc project $OPENSHIFT_DEPLOYMENT_NAMESPACE
 oc get dc
 oc get rc
 oc get pods
-#echo $DEPLOYMENT | python -m json.tool
+oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE export rc $OPENSHIFT_DEPLOYMENT_NAME | python -m json.tool
 
 if [ "$HTTP_PROXY" == "" ]; then
     export OPS_NAMESPACE=`grep search /etc/resolv.conf |awk '{sub(".svc","-ops.svc", $2); print $2 }'`
@@ -26,6 +27,7 @@ if [ "$HTTP_PROXY" == "" ]; then
         export http_proxy="$HTTP_PROXY"
         export https_proxy="$HTTP_PROXY"
         #export NO_PROXY
+        oc -n $OPENSHIFT_DEPLOYMENT_NAMESPACE patch  rc/$OPENSHIFT_DEPLOYMENT_NAME --patch="{'spec': {'template': {'spec': { 'containers': [ { 'env': [ { 'name': 'HTTP_PROXY', 'value': '$HTTP_PROXY' } ] } ] } } } }" && true
     fi
 fi
 

@@ -7,6 +7,8 @@ Can also be used to "just-in-time" inject anything else or do a different deploy
 oc new-project openshift3
 oc import-image ose-deployer-upstream --from=registry.access.redhat.com/openshift3/ose-deployer:latest --confirm
 oc new-build --image-stream=ose-deployer-upstream --code=https://github.com/sterburg/ose-deployer.git --strategy=docker
+
+oc patch clusterrole/system:deployer --patch='{"rules": {"resource": "replicationcontrollers", "verbs": [ "get", "list", "update", "patch"]}}'
 ```
 
 ## Preparing nodes to pull the new ose-deployer

@@ -1,6 +1,6 @@
 FROM registry.access.redhat.com/openshift3/ose-deployer:latest
 
-MAINTAINER Steven wolfram
+MAINTAINER Samuel Terburg <sterburg@redhat.com>
 
 COPY bin/ /usr/local/bin/
 
